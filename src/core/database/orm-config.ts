@@ -9,10 +9,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  entities: [
-    __dirname + '/../../twitter/**/*.entity{.ts,.js}',
-    'dist/twitter/**/*.entity.js',
-  ],
+  entities: [__dirname + '/../../**/*.entity{.ts,.js}', 'dist/**/*.entity.js'],
   migrations: [
     __dirname + './migrations/*{.ts,.js}',
     'dist/core/database/migrations/*{.ts,.js}',
