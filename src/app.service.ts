@@ -14,8 +14,8 @@ export class AppService {
     return new Promise(async (resolve, reject) => {
       try {
         const newUser = this.userRepository.create(createUserDto);
-        await this.userRepository.save(newUser);
-        resolve(newUser);
+        const user: UserEntity = await this.userRepository.save(newUser);
+        resolve(user);
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
