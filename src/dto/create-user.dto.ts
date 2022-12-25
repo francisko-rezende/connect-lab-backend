@@ -1,3 +1,4 @@
+import { CreateAddressDto } from './create-address.dto';
 import {
   IsEmail,
   IsOptional,
@@ -5,8 +6,10 @@ import {
   IsUrl,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 import { MatchesOtherField } from 'src/core/constraints/matches-other-field.decorator';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
   @IsString()
@@ -36,4 +39,8 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   readonly phone: string;
+
+  @ValidateNested()
+  @Type(() => CreateAddressDto)
+  readonly address: CreateAddressDto;
 }
