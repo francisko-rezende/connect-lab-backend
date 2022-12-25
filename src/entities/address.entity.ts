@@ -1,8 +1,15 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { UserEntity } from './user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'addresses' })
 export class AddressEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   addressId: number;
 
   @Column()
