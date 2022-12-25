@@ -1,11 +1,5 @@
 import { UserEntity } from './user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'addresses' })
 export class AddressEntity {
@@ -32,4 +26,7 @@ export class AddressEntity {
 
   @Column({ nullable: true })
   complement: string;
+
+  @OneToOne(() => UserEntity, (user) => user.userId)
+  user: UserEntity;
 }
