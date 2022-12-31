@@ -1,6 +1,4 @@
 import { devices } from './seeds/device-seeds';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/user.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { DeviceEntity } from './entities/device.entity';
@@ -8,23 +6,9 @@ import { DeviceEntity } from './entities/device.entity';
 @Injectable()
 export class AppService {
   constructor(
-    @Inject('USER_REPOSITORY')
-    private readonly userRepository: Repository<UserEntity>,
     @Inject('DEVICE_REPOSITORY')
     private readonly deviceRepository: Repository<DeviceEntity>,
   ) {}
-
-  createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const newUser = this.userRepository.create(createUserDto);
-        const user: UserEntity = await this.userRepository.save(newUser);
-        resolve(user);
-      } catch (error) {
-        reject({ detail: error.detail, code: error.code });
-      }
-    });
-  }
 
   populateDb() {
     return new Promise(async (resolve, reject) => {
