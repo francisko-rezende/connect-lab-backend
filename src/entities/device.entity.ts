@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { DeviceInfoEntity } from './device-info.entity';
 
 @Entity({ name: 'devices' })
 export class DeviceEntity {
@@ -16,4 +23,10 @@ export class DeviceEntity {
 
   @Column()
   photoUrl: string;
+
+  @OneToOne(() => DeviceInfoEntity, (deviceInfo) => deviceInfo.deviceInfoId, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'deviceInfoId' })
+  deviceInfo: DeviceInfoEntity;
 }
