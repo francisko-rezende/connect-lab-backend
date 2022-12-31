@@ -1,3 +1,4 @@
+import { AuthService } from './core/auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import {
   Body,
@@ -10,12 +11,15 @@ import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('user')
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      return await this.appService.createUser(createUserDto);
+      return await this.authService.createUser(createUserDto);
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
     }
