@@ -20,4 +20,14 @@ export class AppController {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Post('populate')
+  async populateDb() {
+    try {
+      const result = await this.appService.populateDb();
+      return result;
+    } catch (error) {
+      throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
