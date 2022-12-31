@@ -6,8 +6,10 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AppService } from './app.service';
+import { CredentialsDto } from './core/auth/dto/credentials.dto';
 
 @Controller()
 export class AppController {
@@ -22,6 +24,16 @@ export class AppController {
       return await this.authService.createUser(createUserDto);
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post('sign-in')
+  async signIn(@Body() credentialsDto: CredentialsDto) {
+    try {
+      const token = await this.authService.signIn(credentialsDto);
+      return { token };
+    } catch (error) {
+      throw new UnauthorizedException('E-mail e/ou senha incorretos');
     }
   }
 
