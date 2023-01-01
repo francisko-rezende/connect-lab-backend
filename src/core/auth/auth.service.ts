@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CredentialsDto } from './dto/credentials.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,45 @@ export class AuthService {
         delete user.password;
         delete user.salt;
         resolve(user);
+      } catch (error) {
+        reject({ detail: error.detail, code: error.code });
+      }
+    });
+  }
+
+  // validateToken(jwtToken: string) {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       resolve(
+  //         await this.jwtService.verify(jwtToken, { ignoreExpiration: false }),
+  //       );
+  //     } catch (error) {
+  //       reject({
+  //         code: 401,
+  //         detail: 'Token inválido',
+  //       });
+  //     }
+  //   });
+  // }
+
+  changePassword(changePasswordDto: ChangePasswordDto) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const credentials: CredentialsDto = {
+          email: changePasswordDto.email,
+          password: changePasswordDto.oldPassword,
+        };
+        const user = await this.checkCredentials(credentials);
+
+        if (user === null) {
+          throw new UnauthorizedException('E-mail e/ou senha incorretos');
+        }
+        user.password = await this.hashPassword(
+          changePasswordDto.newPassword,
+          user.salt,
+        );
+        await this.userRepository.save(user);
+        resolve('Senha alterada com sucesso');
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }

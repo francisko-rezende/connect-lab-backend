@@ -3,13 +3,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import {
   Body,
   Controller,
+  Get,
+  Headers,
   HttpException,
   HttpStatus,
+  Patch,
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CredentialsDto } from './core/auth/dto/credentials.dto';
+import { ChangePasswordDto } from './core/auth/dto/change-password.dto';
 
 @Controller()
 export class AppController {
@@ -24,6 +28,25 @@ export class AppController {
       return await this.authService.createUser(createUserDto);
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('me')
+  async me(@Headers('authorization') authToken) {
+    try {
+      const token = authToken.split('Bearer ')[1];
+      return await this.authService.validateToken(token);
+    } catch (error) {
+      return { code: error.code, detail: error.detail };
+    }
+  }
+
+  @Patch('change-password')
+  async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
+    try {
+      return await this.authService.changePassword(changePasswordDto);
+    } catch (error) {
+      return { code: error.code, detail: error.detail };
     }
   }
 
