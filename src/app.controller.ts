@@ -4,16 +4,18 @@ import {
   Body,
   Controller,
   Get,
-  Headers,
   HttpException,
   HttpStatus,
   Patch,
   Post,
+  Request,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CredentialsDto } from './core/auth/dto/credentials.dto';
 import { ChangePasswordDto } from './core/auth/dto/change-password.dto';
+import { JwtAuthGuard } from './core/auth/guards/jwt-auth.guard';
 
 @Controller()
 export class AppController {
@@ -31,14 +33,23 @@ export class AppController {
     }
   }
 
-  @Get('me')
-  async me(@Headers('authorization') authToken) {
-    try {
-      const token = authToken.split('Bearer ')[1];
-      return await this.authService.validateToken(token);
-    } catch (error) {
-      return { code: error.code, detail: error.detail };
-    }
+  // @Get('me')
+  // async me(@Headers('authorization') authToken) {
+  //   try {
+  //     const token = authToken.split('Bearer ')[1];
+  //     return await this.authService.validateToken(token);
+  //   } catch (error) {
+  //     return { code: error.code, detail: error.detail };
+  //   }
+  // }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me2')
+  async me(@Request() request) {
+    const {
+      user: { userId, email, firstName },
+    } = request;
+    return { userId, email, firstName };
   }
 
   @Patch('change-password')
