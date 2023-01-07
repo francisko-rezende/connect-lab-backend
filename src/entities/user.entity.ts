@@ -6,6 +6,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -25,7 +26,7 @@ export class UserEntity {
   password: string;
 
   @Column()
-  confirmPassword: string;
+  salt: string;
 
   @Column({ nullable: true })
   phone: string;
@@ -35,4 +36,9 @@ export class UserEntity {
   })
   @JoinColumn({ name: 'addressId' })
   address: AddressEntity;
+
+  async checkPassword(receivedPassword: string): Promise<boolean> {
+    const hash = await bcrypt.hash(receivedPassword, this.salt);
+    return this.password === hash;
+  }
 }
