@@ -2,6 +2,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Matches,
 } from 'class-validator';
@@ -9,7 +10,7 @@ import { BrazilianStates } from 'src/utils/brazillian-states.enum';
 export class CreateAddressDto {
   @IsString()
   @IsNotEmpty()
-  @Matches(/[0-9]{5}-[\d]{3}/g, {
+  @Matches(/[0-9]{5}-[0-9]{3}/, {
     message: 'CEP is invalid. It must follow this format: 00000-000.',
   })
   readonly zipCode: string;
@@ -35,6 +36,6 @@ export class CreateAddressDto {
   readonly city: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   readonly complement?: string;
 }
