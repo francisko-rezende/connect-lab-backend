@@ -1,3 +1,4 @@
+import { JwtStrategy } from './core/auth/guards/jwt-strategy';
 import { AuthService } from './core/auth/auth.service';
 import { appProviders } from './app.providers';
 import { Module } from '@nestjs/common';
@@ -18,6 +19,12 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ...databaseProviders, ...appProviders, AuthService],
+  providers: [
+    AppService,
+    ...databaseProviders,
+    ...appProviders,
+    AuthService,
+    JwtStrategy,
+  ],
 })
 export class AppModule {}
