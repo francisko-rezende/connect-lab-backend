@@ -43,14 +43,14 @@ export class AppController {
   //   }
   // }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('me2')
-  async me(@Request() request) {
-    const {
-      user: { userId, email, firstName },
-    } = request;
-    return { userId, email, firstName };
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('me2')
+  // async me(@Request() request) {
+  //   const {
+  //     user: { userId, email, firstName },
+  //   } = request;
+  //   return { userId, email, firstName };
+  // }
 
   @Patch('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
