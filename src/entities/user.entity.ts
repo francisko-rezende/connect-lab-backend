@@ -1,3 +1,4 @@
+import { UserDeviceEntity } from './userDevice.entity';
 import { AddressEntity } from './address.entity';
 import {
   Column,
@@ -5,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
@@ -36,6 +38,9 @@ export class UserEntity {
   })
   @JoinColumn({ name: 'addressId' })
   address: AddressEntity;
+
+  @OneToMany(() => UserDeviceEntity, (userDevice) => userDevice.user)
+  userDevices: UserDeviceEntity[];
 
   async checkPassword(receivedPassword: string): Promise<boolean> {
     const hash = await bcrypt.hash(receivedPassword, this.salt);
