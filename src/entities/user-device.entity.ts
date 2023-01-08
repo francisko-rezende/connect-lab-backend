@@ -13,7 +13,7 @@ export class UserDeviceEntity {
   @PrimaryGeneratedColumn()
   userDeviceId: number;
 
-  @Column({ default: true })
+  @Column({ default: false })
   isOn: boolean;
 
   @ManyToOne(() => UserEntity, (userEntity) => userEntity.userDevices, {
