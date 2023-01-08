@@ -1,4 +1,4 @@
-import { UserDeviceEntity } from './entities/userDevice.entity';
+import { UserDeviceEntity } from './entities/user-device.entity';
 import { DataSource } from 'typeorm';
 import { DeviceEntity } from './entities/device.entity';
 import { UserEntity } from './entities/user.entity';

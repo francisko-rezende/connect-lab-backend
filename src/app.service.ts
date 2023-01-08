@@ -1,5 +1,5 @@
 import { UserEntity } from 'src/entities/user.entity';
-import { UserDeviceEntity } from './entities/userDevice.entity';
+import { UserDeviceEntity } from './entities/user-device.entity';
 import { devices } from './seeds/device-seeds';
 import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
