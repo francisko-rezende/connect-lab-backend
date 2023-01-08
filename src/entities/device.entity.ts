@@ -1,7 +1,9 @@
+import { UserDeviceEntity } from './userDevice.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -29,4 +31,7 @@ export class DeviceEntity {
   })
   @JoinColumn({ name: 'deviceInfoId' })
   deviceInfo: DeviceInfoEntity;
+
+  @OneToMany(() => UserDeviceEntity, (userDevice) => userDevice.device)
+  userDevices: UserDeviceEntity[];
 }

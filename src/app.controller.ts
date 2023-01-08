@@ -1,3 +1,4 @@
+import { LinkDeviceDto } from './dto/link-device.dto';
 import { AuthService } from './core/auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import {
@@ -76,6 +77,37 @@ export class AppController {
     try {
       const result = await this.appService.populateDb();
       return result;
+    } catch (error) {
+      throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('link-device')
+  async linkDevice(@Request() request, @Body() body: LinkDeviceDto) {
+    try {
+      const {
+        user: { userId },
+      } = request;
+
+      const { deviceId } = body;
+
+      const result = await this.appService.linkDevice(+userId, deviceId);
+      return result;
+    } catch (error) {
+      throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user-devices')
+  async findAllUserDevices(@Request() request) {
+    try {
+      const {
+        user: { userId },
+      } = request;
+      const userDevices = await this.appService.findAllUserDevices(+userId);
+      return userDevices;
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
     }
