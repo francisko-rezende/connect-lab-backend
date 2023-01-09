@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Patch,
   Post,
+  Query,
   Request,
   UnauthorizedException,
   UseGuards,
@@ -90,10 +91,7 @@ export class AppController {
         user: { userId },
       } = request;
 
-      const { deviceId } = body;
-
-      const result = await this.appService.linkDevice(+userId, deviceId);
-      return result;
+      return await this.appService.linkDevice(+userId, body);
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
     }
@@ -101,12 +99,17 @@ export class AppController {
 
   @UseGuards(JwtAuthGuard)
   @Get('user-devices')
-  async findAllUserDevices(@Request() request) {
+  async findAllUserDevices(@Request() request, @Query() query) {
     try {
       const {
         user: { userId },
       } = request;
-      const userDevices = await this.appService.findAllUserDevices(+userId);
+
+      const { local: locationQuery } = query;
+      const userDevices = await this.appService.findAllUserDevices(
+        +userId,
+        locationQuery,
+      );
       return userDevices;
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
