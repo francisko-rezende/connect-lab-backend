@@ -1,9 +1,12 @@
 import { UserEntity } from 'src/entities/user.entity';
-import { UserDeviceEntity } from './entities/userDevice.entity';
+import { UserDeviceEntity } from './entities/user-device.entity';
 import { devices } from './seeds/device-seeds';
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindOperator, ILike, Repository } from 'typeorm';
 import { DeviceEntity } from './entities/device.entity';
+import { LocationEntity } from './entities/location.entity';
+import { locations } from './seeds/location-seeds';
+import { LinkDeviceDto } from './dto/link-device.dto';
 
 @Injectable()
 export class AppService {
@@ -14,30 +17,40 @@ export class AppService {
     private readonly userRepository: Repository<UserEntity>,
     @Inject('USER_DEVICE_REPOSITORY')
     private readonly userDeviceRepository: Repository<UserDeviceEntity>,
+    @Inject('LOCATION_REPOSITORY')
+    private readonly locationRepository: Repository<LocationEntity>,
   ) {}
 
   populateDb() {
     return new Promise(async (resolve, reject) => {
       try {
         const dbDevices = await this.deviceRepository.find();
+        const dbLocations = await this.locationRepository.find();
 
-        if (dbDevices.length === devices.length) {
-          resolve('Default devices are already in the database');
+        if (
+          dbDevices.length === devices.length &&
+          dbLocations.length === locations.length
+        ) {
+          resolve('Default devices and locations are already in the database');
           return;
         }
 
         const createdDevices = this.deviceRepository.create(devices);
         await this.deviceRepository.save(createdDevices);
-        resolve('Default devices added to the database');
+
+        const createdLocations = this.locationRepository.create(locations);
+        await this.locationRepository.save(createdLocations);
+        resolve('Default devices and locations added to the database');
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
     });
   }
 
-  linkDevice(userId: number, deviceId: number) {
+  linkDevice(userId: number, linkDeviceDto: LinkDeviceDto) {
     return new Promise(async (resolve, reject) => {
       try {
+        const { deviceId, locationId, room } = linkDeviceDto;
         const user = await this.userRepository.findOne({
           where: { userId: userId },
         });
@@ -46,12 +59,18 @@ export class AppService {
           where: { deviceId: deviceId },
         });
 
+        const location = await this.locationRepository.findOne({
+          where: { locationId: locationId },
+        });
+
         const newUserDevice = this.userDeviceRepository.create({
           user,
           device,
+          room,
+          location,
         });
         await this.userDeviceRepository.save(newUserDevice);
-        console.log(newUserDevice);
+
         resolve(newUserDevice);
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
@@ -59,27 +78,50 @@ export class AppService {
     });
   }
 
-  findAllUserDevices(userId: number) {
+  findAllUserDevices(userId: number, locationQuery?: string) {
     return new Promise(async (resolve, reject) => {
       try {
+        let where: {
+          userDevices?: { location: { description: FindOperator<string> } };
+          userId: number;
+        } = { userId: userId };
+
+        if (locationQuery) {
+          where = {
+            ...where,
+            userDevices: {
+              location: { description: ILike(`%${locationQuery}%`) },
+            },
+          };
+        }
         const user = await this.userRepository.findOne({
-          where: { userId: userId },
-          relations: { userDevices: { device: { deviceInfo: true } } },
+          where,
+          relations: {
+            userDevices: {
+              device: { deviceInfo: true },
+              location: true,
+            },
+          },
         });
 
+        if (!user) {
+          resolve([]);
+          return;
+        }
+
         const userDevices = user.userDevices.map(
-          ({ device: { name, type, madeBy, deviceInfo }, isOn }) => ({
+          ({ device: { name, type, madeBy, deviceInfo }, isOn, room }) => ({
             name,
             type,
             madeBy,
             isOn,
+            room,
             deviceInfo,
           }),
         );
 
         resolve(userDevices);
       } catch (error) {
-        console.log(error);
         reject({ detail: error.detail, code: error.code });
       }
     });

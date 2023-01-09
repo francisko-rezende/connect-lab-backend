@@ -1,4 +1,4 @@
-import { UserDeviceEntity } from './userDevice.entity';
+import { UserDeviceEntity } from './user-device.entity';
 import { AddressEntity } from './address.entity';
 import {
   Column,
