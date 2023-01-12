@@ -29,7 +29,10 @@ export class AppController {
   @Post('user')
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      return await this.authService.createUser(createUserDto);
+      const userCreatedMessage = await this.authService.createUser(
+        createUserDto,
+      );
+      return { statusCode: HttpStatus.CREATED, message: userCreatedMessage };
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
     }
@@ -57,8 +60,16 @@ export class AppController {
   @Patch('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
     try {
-      return await this.authService.changePassword(changePasswordDto);
+      await this.authService.changePassword(changePasswordDto);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Senha alterada com sucesso',
+      };
     } catch (error) {
+      if (!error) {
+        throw new UnauthorizedException('E-mail e/ou senha incorretos');
+      }
       return { code: error.code, detail: error.detail };
     }
   }

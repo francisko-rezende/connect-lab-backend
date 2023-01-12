@@ -37,5 +37,5 @@ export class CreateAddressDto {
 
   @IsString()
   @IsOptional()
-  readonly complement?: string;
+  readonly complement: string;
 }

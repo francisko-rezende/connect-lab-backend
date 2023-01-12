@@ -1,6 +1,7 @@
 import { CreateAddressDto } from './create-address.dto';
 import {
   IsEmail,
+  IsNotEmpty,
   IsOptional,
   IsString,
   IsUrl,
@@ -15,6 +16,7 @@ export class CreateUserDto {
   @IsString()
   @MinLength(5)
   @MaxLength(50)
+  @IsNotEmpty()
   readonly fullName: string;
 
   @IsString()
@@ -24,13 +26,16 @@ export class CreateUserDto {
 
   @IsString()
   @IsEmail()
+  @IsNotEmpty()
   readonly email: string;
 
   @IsString()
   @MinLength(8)
+  @IsNotEmpty()
   readonly password: string;
 
   @IsString()
+  @IsNotEmpty()
   @MatchesOtherField('password', {
     message: 'confirmPassword field must match password field',
   })
@@ -41,6 +46,7 @@ export class CreateUserDto {
   readonly phone: string;
 
   @ValidateNested()
+  @IsNotEmpty()
   @Type(() => CreateAddressDto)
   readonly address: CreateAddressDto;
 }
