@@ -18,7 +18,11 @@ export class UserEntity {
   @Column()
   fullName: string;
 
-  @Column({ nullable: true })
+  @Column({
+    nullable: true,
+    default:
+      'https://res.cloudinary.com/dqd4u48y1/image/upload/v1673561527/llama_xx3coq.webp',
+  })
   photoUrl: string;
 
   @Column()
