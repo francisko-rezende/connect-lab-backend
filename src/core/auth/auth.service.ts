@@ -15,17 +15,15 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
+  createUser(createUserDto: CreateUserDto): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const { password } = createUserDto;
         const newUser = this.userRepository.create(createUserDto);
         newUser.salt = await bcrypt.genSalt(14);
         newUser.password = await this.hashPassword(password, newUser.salt);
-        const user: UserEntity = await this.userRepository.save(newUser);
-        delete user.password;
-        delete user.salt;
-        resolve(user);
+        await this.userRepository.save(newUser);
+        resolve('Usuário criado com sucesso');
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
@@ -54,10 +52,11 @@ export class AuthService {
           email: changePasswordDto.email,
           password: changePasswordDto.oldPassword,
         };
-        const user = await this.checkCredentials(credentials);
 
+        const user = await this.checkCredentials(credentials);
         if (user === null) {
-          throw new UnauthorizedException('E-mail e/ou senha incorretos');
+          reject(null);
+          return;
         }
         user.password = await this.hashPassword(
           changePasswordDto.newPassword,
