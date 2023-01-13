@@ -1,3 +1,4 @@
+import { LocationQueryDto } from './dto/location-query.dto';
 import { LinkDeviceDto } from './dto/link-device.dto';
 import { AuthService } from './core/auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -114,15 +115,13 @@ export class AppController {
 
   @UseGuards(JwtAuthGuard)
   @Get('user-devices')
-  async findAllUserDevices(@Request() request, @Query() query) {
+  async findAllUserDevices(
+    @Request() request,
+    @Query() locationQuery: LocationQueryDto,
+  ) {
     try {
-      const {
-        user: { userId },
-      } = request;
-
-      const { local: locationQuery } = query;
       const userDevices = await this.appService.findAllUserDevices(
-        +userId,
+        request.user,
         locationQuery,
       );
       return userDevices;
