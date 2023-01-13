@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CredentialsDto } from './dto/credentials.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { JwtPayloadUser } from 'src/utils/jwt-payload-user';
 
 @Injectable()
 export class AuthService {
@@ -70,25 +71,28 @@ export class AuthService {
     });
   }
 
-  async signIn(credentialsDto: CredentialsDto) {
-    const user = await this.checkCredentials(credentialsDto);
+  async signIn(credentialsDto: CredentialsDto): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = await this.checkCredentials(credentialsDto);
 
-    if (user === null) {
-      throw new UnauthorizedException('E-mail e/ou senha incorretos');
-    }
+        if (user === null) {
+          reject(null);
+          return;
+        }
 
-    const { userId, fullName, email } = user;
-
-    const firstName = this.getFirstName(fullName);
-
-    const jwtPayload = {
-      userId,
-      firstName,
-      email,
-    };
-
-    const token = this.jwtService.sign(jwtPayload);
-    return token;
+        const { userId, fullName, email } = user;
+        const firstName = this.getFirstName(fullName);
+        const jwtPayload: JwtPayloadUser = {
+          userId,
+          firstName,
+          email,
+        };
+        resolve(this.jwtService.sign(jwtPayload));
+      } catch (error) {
+        reject({ detail: error.detail, code: error.code });
+      }
+    });
   }
 
   async checkCredentials(credentialsDto: CredentialsDto) {
