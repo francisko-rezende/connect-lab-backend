@@ -1,3 +1,6 @@
+import { LocationQueryDto } from './dto/location-query.dto';
+import { FindUserDevicesResponseDto } from './dto/find-user-devices-response.dto';
+import { JwtPayloadUser } from 'src/utils/jwt-payload-user';
 import { UserEntity } from 'src/entities/user.entity';
 import { UserDeviceEntity } from './entities/user-device.entity';
 import { devices } from './seeds/device-seeds';
@@ -78,23 +81,29 @@ export class AppService {
     });
   }
 
-  findAllUserDevices(userId: number, locationQuery?: string) {
+  findAllUserDevices(
+    userPayload: JwtPayloadUser,
+    locationQuery?: LocationQueryDto,
+  ): Promise<FindUserDevicesResponseDto[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        const { userId } = userPayload;
+        const { local } = locationQuery;
+
         let where: {
           userDevices?: { location: { description: FindOperator<string> } };
           userId: number;
         } = { userId: userId };
 
-        if (locationQuery) {
+        if (local) {
           where = {
             ...where,
             userDevices: {
-              location: { description: ILike(`%${locationQuery}%`) },
+              location: { description: ILike(`%${local}%`) },
             },
           };
         }
-        const user = await this.userRepository.findOne({
+        const userDevices = await this.userRepository.findOne({
           where,
           relations: {
             userDevices: {
@@ -104,23 +113,24 @@ export class AppService {
           },
         });
 
-        if (!user) {
+        if (!userDevices) {
           resolve([]);
           return;
         }
 
-        const userDevices = user.userDevices.map(
-          ({ device: { name, type, madeBy, deviceInfo }, isOn, room }) => ({
-            name,
-            type,
-            madeBy,
-            isOn,
-            room,
-            deviceInfo,
-          }),
-        );
+        const linkedUserDevicesDto: FindUserDevicesResponseDto[] =
+          userDevices.userDevices.map(
+            ({ device: { name, type, madeBy, deviceInfo }, isOn, room }) => ({
+              name,
+              type,
+              madeBy,
+              isOn,
+              room,
+              deviceInfo,
+            }),
+          );
 
-        resolve(userDevices);
+        resolve(linkedUserDevicesDto);
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
