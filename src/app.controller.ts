@@ -80,7 +80,10 @@ export class AppController {
       const token = await this.authService.signIn(credentialsDto);
       return { token };
     } catch (error) {
-      throw new UnauthorizedException('E-mail e/ou senha incorretos');
+      if (!error) {
+        throw new UnauthorizedException('E-mail e/ou senha incorretos');
+      }
+      return { code: error.code, detail: error.detail };
     }
   }
 
