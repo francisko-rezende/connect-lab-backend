@@ -57,6 +57,7 @@ export class AppController {
   //   return { userId, email, firstName };
   // }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
     try {
