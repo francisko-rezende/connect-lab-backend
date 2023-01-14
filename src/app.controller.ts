@@ -1,3 +1,4 @@
+import { FindOneUserDeviceParamDto } from './dto/find-one-user-device-param.dto';
 import { LocationQueryDto } from './dto/location-query.dto';
 import { LinkDeviceDto } from './dto/link-device.dto';
 import { AuthService } from './core/auth/auth.service';
@@ -8,6 +9,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Patch,
   Post,
   Query,
@@ -100,7 +102,7 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('link-device')
+  @Post('user-device')
   async linkDevice(@Request() request, @Body() body: LinkDeviceDto) {
     try {
       const message = await this.appService.linkDevice(request.user, body);
@@ -131,6 +133,16 @@ export class AppController {
       return userDevices;
     } catch (error) {
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user-devices/:userDeviceId')
+  async findOneUserDevice(@Param() param: FindOneUserDeviceParamDto) {
+    try {
+      return await this.appService.findOneUserDevice(+param.userDeviceId);
+    } catch (error) {
+      throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
     }
   }
 }
