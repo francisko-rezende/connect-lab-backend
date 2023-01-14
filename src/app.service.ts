@@ -1,3 +1,4 @@
+import { FindOneUserResponseDto } from './dto/find-one-user-response.dto';
 import { LocationQueryDto } from './dto/location-query.dto';
 import { FindUserDevicesResponseDto } from './dto/find-user-devices-response.dto';
 import { JwtPayloadUser } from 'src/utils/jwt-payload-user';
@@ -163,6 +164,33 @@ export class AppService {
         resolve(this.reshapeToFindUserDeviceDto(userDevice));
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
+      }
+    });
+  }
+
+  findOneUser(jwtPayloadUser: JwtPayloadUser): Promise<FindOneUserResponseDto> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { userId } = jwtPayloadUser;
+        const user = await this.userRepository.findOne({
+          where: { userId: userId },
+          relations: { address: true },
+          select: {
+            userId: true,
+            fullName: true,
+            photoUrl: true,
+            email: true,
+            phone: true,
+          },
+        });
+
+        if (!user.phone) {
+          delete user.phone;
+        }
+
+        resolve(user);
+      } catch (error) {
+        reject(error);
       }
     });
   }
