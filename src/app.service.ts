@@ -50,9 +50,10 @@ export class AppService {
     });
   }
 
-  linkDevice(userId: number, linkDeviceDto: LinkDeviceDto) {
+  linkDevice(jwtPayloadUser: JwtPayloadUser, linkDeviceDto: LinkDeviceDto) {
     return new Promise(async (resolve, reject) => {
       try {
+        const { userId } = jwtPayloadUser;
         const { deviceId, locationId, room } = linkDeviceDto;
         const user = await this.userRepository.findOne({
           where: { userId: userId },
@@ -62,9 +63,19 @@ export class AppService {
           where: { deviceId: deviceId },
         });
 
+        if (!device) {
+          reject('Dispositivo não encontrado');
+          return;
+        }
+
         const location = await this.locationRepository.findOne({
           where: { locationId: locationId },
         });
+
+        if (!location) {
+          reject('Local não encontrado');
+          return;
+        }
 
         const newUserDevice = this.userDeviceRepository.create({
           user,
@@ -74,7 +85,7 @@ export class AppService {
         });
         await this.userDeviceRepository.save(newUserDevice);
 
-        resolve(newUserDevice);
+        resolve('Dispositivo vinculado com sucesso');
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }

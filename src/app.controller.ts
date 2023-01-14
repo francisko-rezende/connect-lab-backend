@@ -103,12 +103,16 @@ export class AppController {
   @Post('link-device')
   async linkDevice(@Request() request, @Body() body: LinkDeviceDto) {
     try {
-      const {
-        user: { userId },
-      } = request;
-
-      return await this.appService.linkDevice(+userId, body);
+      const message = await this.appService.linkDevice(request.user, body);
+      return { statusCode: HttpStatus.CREATED, message };
     } catch (error) {
+      if (typeof error === 'string') {
+        throw new HttpException(
+          { statusCode: HttpStatus.BAD_REQUEST, message: error },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
     }
   }
