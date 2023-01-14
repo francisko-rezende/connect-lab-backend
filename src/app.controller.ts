@@ -37,6 +37,9 @@ export class AppController {
       );
       return { statusCode: HttpStatus.CREATED, message: userCreatedMessage };
     } catch (error) {
+      if (error.code == 23505)
+        throw new HttpException({ reason: error.detail }, HttpStatus.CONFLICT);
+
       throw new HttpException({ reason: error.detail }, HttpStatus.BAD_REQUEST);
     }
   }
