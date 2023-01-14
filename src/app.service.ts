@@ -130,21 +130,61 @@ export class AppService {
         }
 
         const linkedUserDevicesDto: FindUserDevicesResponseDto[] =
-          userDevices.userDevices.map(
-            ({ device: { name, type, madeBy, deviceInfo }, isOn, room }) => ({
-              name,
-              type,
-              madeBy,
-              isOn,
-              room,
-              deviceInfo,
-            }),
-          );
+          userDevices.userDevices.map(this.reshapeToFindUserDeviceDto);
 
         resolve(linkedUserDevicesDto);
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
     });
+  }
+
+  findOneUserDevice(userDeviceId: number): Promise<FindUserDevicesResponseDto> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userDevice = await this.userDeviceRepository.findOne({
+          where: { userDeviceId: userDeviceId },
+          relations: { device: { deviceInfo: true } },
+          select: {
+            userDeviceId: true,
+            isOn: true,
+            device: {
+              name: true,
+              type: true,
+              madeBy: true,
+            },
+          },
+        });
+
+        if (!userDevice) {
+          reject('Dispositivo não encontrado');
+        }
+
+        resolve(this.reshapeToFindUserDeviceDto(userDevice));
+      } catch (error) {
+        reject({ detail: error.detail, code: error.code });
+      }
+    });
+  }
+
+  reshapeToFindUserDeviceDto(
+    userDevice: UserDeviceEntity,
+  ): FindUserDevicesResponseDto {
+    const {
+      userDeviceId,
+      device: { name, type, madeBy, deviceInfo },
+      isOn,
+      room,
+    } = userDevice;
+
+    return {
+      userDeviceId,
+      name,
+      type,
+      madeBy,
+      isOn,
+      room,
+      deviceInfo,
+    };
   }
 }
