@@ -41,24 +41,15 @@ export class AppController {
     }
   }
 
-  // @Get('me')
-  // async me(@Headers('authorization') authToken) {
-  //   try {
-  //     const token = authToken.split('Bearer ')[1];
-  //     return await this.authService.validateToken(token);
-  //   } catch (error) {
-  //     return { code: error.code, detail: error.detail };
-  //   }
-  // }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Get('me2')
-  // async me(@Request() request) {
-  //   const {
-  //     user: { userId, email, firstName },
-  //   } = request;
-  //   return { userId, email, firstName };
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  async me(@Request() request) {
+    try {
+      return await this.appService.findOneUser(request.user);
+    } catch (error) {
+      throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   @UseGuards(JwtAuthGuard)
   @Patch('change-password')
