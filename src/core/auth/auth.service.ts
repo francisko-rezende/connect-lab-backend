@@ -66,12 +66,13 @@ export class AuthService {
           return;
         }
 
-        const { userId, fullName, email } = user;
+        const { userId, fullName, email, photoUrl } = user;
         const firstName = this.getFirstName(fullName);
         const jwtPayload: JwtPayloadUser = {
           userId,
           firstName,
           email,
+          photoUrl,
         };
         resolve(this.jwtService.sign(jwtPayload));
       } catch (error) {
