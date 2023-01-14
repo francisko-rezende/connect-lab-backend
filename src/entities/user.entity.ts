@@ -25,7 +25,7 @@ export class UserEntity {
   })
   photoUrl: string;
 
-  @Column()
+  @Column({ length: 50, unique: true })
   email: string;
 
   @Column()

@@ -31,21 +31,6 @@ export class AuthService {
     });
   }
 
-  // validateToken(jwtToken: string) {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       resolve(
-  //         await this.jwtService.verify(jwtToken, { ignoreExpiration: false }),
-  //       );
-  //     } catch (error) {
-  //       reject({
-  //         code: 401,
-  //         detail: 'Token inválido',
-  //       });
-  //     }
-  //   });
-  // }
-
   changePassword(changePasswordDto: ChangePasswordDto) {
     return new Promise(async (resolve, reject) => {
       try {
