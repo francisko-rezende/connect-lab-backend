@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEnum,
   IsNotEmpty,
@@ -8,6 +9,10 @@ import {
 } from 'class-validator';
 import { BrazilianStates } from 'src/utils/brazillian-states.enum';
 export class CreateAddressDto {
+  @ApiProperty({
+    example: '20020-050',
+    description: "The address' postal code",
+  })
   @IsString()
   @IsNotEmpty()
   @Matches(/[0-9]{5}-[0-9]{3}/, {
@@ -37,5 +42,5 @@ export class CreateAddressDto {
 
   @IsString()
   @IsOptional()
-  readonly complement: string;
+  readonly complement?: string;
 }
