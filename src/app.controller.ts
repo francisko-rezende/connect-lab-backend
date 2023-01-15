@@ -145,6 +145,7 @@ export class AppController {
 
   @ApiTags('User')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch('change-password')
   @ApiOperation({
     summary: 'Allows the user to change their password',
