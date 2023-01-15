@@ -199,7 +199,7 @@ export class AppController {
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiBearerAuth()
-  @Get('user-devices')
+  @Get('userDevices/user')
   async findAllUserDevices(
     @Request() request,
     @Query() locationQuery: LocationQueryDto,

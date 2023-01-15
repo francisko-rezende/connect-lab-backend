@@ -2,7 +2,7 @@ import { DeviceEntity } from 'src/entities/device.entity';
 import { PopulateDbSuccessfulResponseDto } from './dto/populate-db-successful.response.dto';
 import { FindOneUserResponseDto } from './dto/find-one-user-response.dto';
 import { LocationQueryDto } from './dto/location-query.dto';
-import { FindUserDevicesResponseDto } from './dto/find-user-devices-response.dto';
+// import { FindUserDevicesResponseDto } from './dto/find-user-devices-response.dto';
 import { JwtPayloadUser } from 'src/utils/jwt-payload-user';
 import { UserEntity } from 'src/entities/user.entity';
 import { UserDeviceEntity } from './entities/user-device.entity';
@@ -115,7 +115,7 @@ export class AppService {
   findAllUserDevices(
     userPayload: JwtPayloadUser,
     locationQuery?: LocationQueryDto,
-  ): Promise<FindUserDevicesResponseDto[]> {
+  ) {
     return new Promise(async (resolve, reject) => {
       try {
         const { userId } = userPayload;
@@ -128,34 +128,39 @@ export class AppService {
           },
           relations: {
             device: { deviceInfo: true },
+            user: true,
+            location: true,
           },
-          select: {
-            userDeviceId: true,
-            isOn: true,
-            device: {
-              name: true,
-              type: true,
-              madeBy: true,
-            },
-          },
+          // select: {
+          //   userDeviceId: true,
+          //   isOn: true,
+          //   device: {
+          //     name: true,
+          //     type: true,
+          //     madeBy: true,
+          //   },
+          // },
         });
+        console.log(userDevicesResult);
 
         if (!userDevicesResult) {
           resolve([]);
           return;
         }
 
-        const linkedUserDevicesDto: FindUserDevicesResponseDto[] =
-          userDevicesResult.map(this.reshapeToFindUserDeviceDto);
+        const linkedUserDevicesDto = userDevicesResult.map(
+          this.reshapeToFindUserDeviceDto,
+        );
 
         resolve(linkedUserDevicesDto);
       } catch (error) {
+        console.log(error);
         reject({ detail: error.detail, code: error.code });
       }
     });
   }
 
-  findOneUserDevice(userDeviceId: number): Promise<FindUserDevicesResponseDto> {
+  findOneUserDevice(userDeviceId: number) {
     return new Promise(async (resolve, reject) => {
       try {
         const userDevice = await this.userDeviceRepository.findOne({
@@ -233,24 +238,30 @@ export class AppService {
     });
   }
 
-  reshapeToFindUserDeviceDto(
-    userDevice: UserDeviceEntity,
-  ): FindUserDevicesResponseDto {
+  reshapeToFindUserDeviceDto(userDevice: UserDeviceEntity) {
     const {
+      user: { userId },
       userDeviceId,
-      device: { name, type, madeBy, deviceInfo },
+      device: { name, type, madeBy, deviceInfo, deviceId, photoUrl },
       isOn,
       room,
+      location,
     } = userDevice;
 
     return {
-      userDeviceId,
-      name,
-      type,
-      madeBy,
-      isOn,
+      _id: userDeviceId,
+      user: userId,
+      device: {
+        info: deviceInfo,
+        _id: deviceId,
+        name,
+        type,
+        madeBy,
+        photoUrl,
+      },
+      local: location,
+      is_on: isOn,
       room,
-      deviceInfo,
     };
   }
 }
