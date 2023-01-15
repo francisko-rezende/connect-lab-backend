@@ -1,38 +1,32 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Connect Lab
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a simple REST API that allows you to manage users, devices, and locations. This project is built using NestJS. This project also uses OpenAPI/Swagger to document and test the API endpoints.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Getting Started
 
-## Description
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Prerequisites
 
-## Installation
+- Node.js
+- NestJS
+- TypeScript
+
+### Installing
+
+1. Clone the repository
 
 ```bash
-$ npm install
+git clone https://github.com/francisko-rezende/connect-lab-backend.git
 ```
 
-## Running the app
+2. Install the dependencies
+
+```bash
+npm install
+```
+
+3. Run the application
 
 ```bash
 # development
@@ -45,29 +39,41 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+### Populating the Database
 
-```bash
-# unit tests
-$ npm run test
+The first time you set up the project, you will need to populate the database with the default devices and locations. To do this, you can use the `/populate` endpoint.
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+POST /populate
 ```
 
-## Support
+This will add the default devices and locations to the database.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Accessing the OpenAPI/Swagger page
 
-## Stay in touch
+You can access the OpenAPI/Swagger page by visiting `http://localhost:3000/api` in your browser with the app running. This page allows you to view the API documentation and test the endpoints.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Downloading the OpenAPI JSON
 
-## License
+You can download the OpenAPI JSON by visiting `http://localhost:3000/api-json` in your browser with the app running. This will download the JSON file which contains the API documentation.
 
-Nest is [MIT licensed](LICENSE).
+### Endpoints
+
+- `/sign-in`: Allows user to sign in with their credentials
+- `/user`: Allows user to create and retrieve their profile
+- `/change-password`: Allows the user to change their password
+- `/user-device`: Allows the user to link a device to their profile
+- `/user-devices`: Allows the user to retrieve all the linked devices
+
+### Built With
+
+- [NestJS](https://nestjs.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+
+### Authors
+
+[Francisko de Moraes Rezende](https://www.linkedin.com/in/francisko-rezende/)
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
