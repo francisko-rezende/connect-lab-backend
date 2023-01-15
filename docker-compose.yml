@@ -1,0 +1,17 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: batata
+    ports:
+      - "5432:5432"
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.2
+networks:
+  my-network:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.18.0.0/16
