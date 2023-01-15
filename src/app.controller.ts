@@ -173,11 +173,12 @@ export class AppController {
   })
   @ApiCreatedResponse({ type: CreatedSuccessfulResponseDto })
   @ApiBearerAuth()
-  @Post('user-device')
+  @Post('userDevices')
   async linkDevice(@Request() request, @Body() body: LinkDeviceDto) {
     try {
-      const message = await this.appService.linkDevice(request.user, body);
-      return { statusCode: HttpStatus.CREATED, message };
+      return await this.appService.linkDevice(request.user, body);
+      // const message = await this.appService.linkDevice(request.user, body);
+      // return { statusCode: HttpStatus.CREATED, message };
     } catch (error) {
       if (typeof error === 'string') {
         throw new HttpException(

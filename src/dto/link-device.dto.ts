@@ -3,11 +3,11 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class LinkDeviceDto {
   @IsNumber()
   @IsNotEmpty()
-  deviceId: number;
+  device: number;
 
   @IsNumber()
   @IsNotEmpty()
-  locationId: number;
+  local: number;
 
   @IsString()
   @IsNotEmpty()

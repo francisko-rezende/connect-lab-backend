@@ -66,7 +66,7 @@ export class AppService {
     return new Promise(async (resolve, reject) => {
       try {
         const { userId } = jwtPayloadUser;
-        const { deviceId, locationId, room } = linkDeviceDto;
+        const { device: deviceId, local: locationId, room } = linkDeviceDto;
         const user = await this.userRepository.findOne({
           where: { userId: userId },
         });
@@ -96,8 +96,16 @@ export class AppService {
           location,
         });
         await this.userDeviceRepository.save(newUserDevice);
+        const result = {
+          user: userId,
+          device: device.deviceId,
+          local: location.locationId,
+          is_on: newUserDevice.isOn,
+          room: newUserDevice.room,
+          _id: newUserDevice.userDeviceId,
+        };
 
-        resolve('Device successfully linked to user');
+        resolve(result);
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
