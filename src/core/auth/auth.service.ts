@@ -1,4 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ChangePasswordSuccessfulResponseDto } from './../../dto/change-password-successful-response.dto';
+import { SignInSuccessfulResponseDto } from './../../dto/sign-in-successful-response.dto';
+import { Inject, Injectable, HttpStatus } from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -24,14 +26,16 @@ export class AuthService {
         newUser.salt = await bcrypt.genSalt(14);
         newUser.password = await this.hashPassword(password, newUser.salt);
         await this.userRepository.save(newUser);
-        resolve('Usuário criado com sucesso');
+        resolve('User created successfully');
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
     });
   }
 
-  changePassword(changePasswordDto: ChangePasswordDto) {
+  changePassword(
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<ChangePasswordSuccessfulResponseDto> {
     return new Promise(async (resolve, reject) => {
       try {
         const credentials: CredentialsDto = {
@@ -40,23 +44,30 @@ export class AuthService {
         };
 
         const user = await this.checkCredentials(credentials);
+
         if (user === null) {
           reject(null);
           return;
         }
+
         user.password = await this.hashPassword(
           changePasswordDto.newPassword,
           user.salt,
         );
         await this.userRepository.save(user);
-        resolve('Senha alterada com sucesso');
+        resolve({
+          statusCode: HttpStatus.OK,
+          message: 'Password has been successfully changed',
+        });
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
     });
   }
 
-  async signIn(credentialsDto: CredentialsDto): Promise<string> {
+  async signIn(
+    credentialsDto: CredentialsDto,
+  ): Promise<SignInSuccessfulResponseDto> {
     return new Promise(async (resolve, reject) => {
       try {
         const user = await this.checkCredentials(credentialsDto);
@@ -74,7 +85,7 @@ export class AuthService {
           email,
           photoUrl,
         };
-        resolve(this.jwtService.sign(jwtPayload));
+        resolve({ token: this.jwtService.sign(jwtPayload) });
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }

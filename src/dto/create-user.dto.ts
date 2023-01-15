@@ -22,7 +22,7 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   @IsUrl()
-  readonly photoUrl: string;
+  readonly photoUrl?: string;
 
   @IsString()
   @IsEmail()
@@ -43,7 +43,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  readonly phone: string;
+  readonly phone?: string;
 
   @ValidateNested()
   @IsNotEmpty()

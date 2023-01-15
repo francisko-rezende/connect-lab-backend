@@ -1,3 +1,4 @@
+import { PopulateDbSuccessfulResponseDto } from './dto/populate-db-successful.response.dto';
 import { FindOneUserResponseDto } from './dto/find-one-user-response.dto';
 import { LocationQueryDto } from './dto/location-query.dto';
 import { FindUserDevicesResponseDto } from './dto/find-user-devices-response.dto';
@@ -5,7 +6,7 @@ import { JwtPayloadUser } from 'src/utils/jwt-payload-user';
 import { UserEntity } from 'src/entities/user.entity';
 import { UserDeviceEntity } from './entities/user-device.entity';
 import { devices } from './seeds/device-seeds';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, HttpStatus } from '@nestjs/common';
 import { FindOperator, ILike, Repository } from 'typeorm';
 import { DeviceEntity } from './entities/device.entity';
 import { LocationEntity } from './entities/location.entity';
@@ -25,7 +26,7 @@ export class AppService {
     private readonly locationRepository: Repository<LocationEntity>,
   ) {}
 
-  populateDb() {
+  populateDb(): Promise<PopulateDbSuccessfulResponseDto> {
     return new Promise(async (resolve, reject) => {
       try {
         const dbDevices = await this.deviceRepository.find();
@@ -35,7 +36,11 @@ export class AppService {
           dbDevices.length === devices.length &&
           dbLocations.length === locations.length
         ) {
-          resolve('Default devices and locations are already in the database');
+          resolve({
+            message:
+              'Default devices and locations are already in the database',
+            statusCode: HttpStatus.OK,
+          });
           return;
         }
 
@@ -44,7 +49,10 @@ export class AppService {
 
         const createdLocations = this.locationRepository.create(locations);
         await this.locationRepository.save(createdLocations);
-        resolve('Default devices and locations added to the database');
+        resolve({
+          message: 'Default devices and locations added to the database',
+          statusCode: HttpStatus.CREATED,
+        });
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
@@ -65,7 +73,7 @@ export class AppService {
         });
 
         if (!device) {
-          reject('Dispositivo não encontrado');
+          reject('Device not found');
           return;
         }
 
@@ -74,7 +82,7 @@ export class AppService {
         });
 
         if (!location) {
-          reject('Local não encontrado');
+          reject('Location not found');
           return;
         }
 
@@ -86,7 +94,7 @@ export class AppService {
         });
         await this.userDeviceRepository.save(newUserDevice);
 
-        resolve('Dispositivo vinculado com sucesso');
+        resolve('Device successfully linked to user');
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
