@@ -83,8 +83,7 @@ export class AppController {
   @Post('sign-in')
   async signIn(@Body() credentialsDto: CredentialsDto) {
     try {
-      const token = await this.authService.signIn(credentialsDto);
-      return { token };
+      return await this.authService.signIn(credentialsDto);
     } catch (error) {
       if (!error) {
         throw new UnauthorizedException('Invalid email and/or password');
