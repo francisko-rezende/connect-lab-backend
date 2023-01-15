@@ -15,6 +15,9 @@ import { LinkDeviceDto } from './dto/link-device.dto';
 
 @Injectable()
 export class AppService {
+  async findAllLocals() {
+    return await this.locationRepository.find();
+  }
   constructor(
     @Inject('DEVICE_REPOSITORY')
     private readonly deviceRepository: Repository<DeviceEntity>,

@@ -238,4 +238,11 @@ export class AppController {
       return await this.appService.findAllDevices();
     } catch (error) {}
   }
+
+  @Post('locals')
+  async findAllLocals() {
+    try {
+      return await this.appService.findAllLocals();
+    } catch (error) {}
+  }
 }
