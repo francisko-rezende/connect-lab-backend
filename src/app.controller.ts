@@ -231,4 +231,11 @@ export class AppController {
       throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Post('devices')
+  async findAllDevices() {
+    try {
+      return await this.appService.findAllDevices();
+    } catch (error) {}
+  }
 }

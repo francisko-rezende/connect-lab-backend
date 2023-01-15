@@ -1,3 +1,4 @@
+import { DeviceEntity } from 'src/entities/device.entity';
 import { PopulateDbSuccessfulResponseDto } from './dto/populate-db-successful.response.dto';
 import { FindOneUserResponseDto } from './dto/find-one-user-response.dto';
 import { LocationQueryDto } from './dto/location-query.dto';
@@ -8,7 +9,6 @@ import { UserDeviceEntity } from './entities/user-device.entity';
 import { devices } from './seeds/device-seeds';
 import { Inject, Injectable, HttpStatus } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { DeviceEntity } from './entities/device.entity';
 import { LocationEntity } from './entities/location.entity';
 import { locations } from './seeds/location-seeds';
 import { LinkDeviceDto } from './dto/link-device.dto';
@@ -195,6 +195,29 @@ export class AppService {
         resolve(user);
       } catch (error) {
         reject(error);
+      }
+    });
+  }
+
+  findAllDevices() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const devices: DeviceEntity[] = await this.deviceRepository.find({
+          relations: { deviceInfo: true },
+        });
+        const mappedDevices = devices.map(
+          ({ deviceId, name, type, madeBy, photoUrl, deviceInfo }) => ({
+            info: deviceInfo,
+            _id: deviceId,
+            name,
+            type,
+            madeBy,
+            photoUrl,
+          }),
+        );
+        resolve(mappedDevices);
+      } catch (error) {
+        reject({ detail: error.detail, code: error.code });
       }
     });
   }
