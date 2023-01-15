@@ -74,6 +74,9 @@ export class AppController {
 
   @ApiTags('Auth')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Allows user to sign in with their credentials',
+  })
   @ApiBody({ type: CredentialsDto })
   @ApiOkResponse({
     type: SignInSuccessfulResponseDto,
@@ -94,6 +97,9 @@ export class AppController {
 
   @ApiTags('User')
   @ApiCreatedResponse({ type: CreatedSuccessfulResponseDto })
+  @ApiOperation({
+    summary: 'Allows user to create their profile',
+  })
   @ApiConflictResponse({ type: ConflictErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @Post('user')
@@ -124,6 +130,9 @@ export class AppController {
     type: FindOneUserResponseDto,
   })
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Allows user to retrieve their profile',
+  })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @Get('user')
   async me(@Request() request) {
@@ -137,6 +146,9 @@ export class AppController {
   @ApiTags('User')
   @UseGuards(JwtAuthGuard)
   @Patch('change-password')
+  @ApiOperation({
+    summary: 'Allows the user to change their password',
+  })
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiOkResponse({
@@ -157,6 +169,9 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
+  @ApiOperation({
+    summary: 'Allows the user to link a device to their profile',
+  })
   @ApiCreatedResponse({ type: CreatedSuccessfulResponseDto })
   @ApiBearerAuth()
   @Post('user-device')
@@ -178,6 +193,9 @@ export class AppController {
 
   @ApiTags('User devices')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Allows the user to retrieve all the linked devices',
+  })
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiBearerAuth()
@@ -199,6 +217,10 @@ export class AppController {
 
   @ApiTags('User devices')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary:
+      'Allows the user to retrieve a specific device linked to his profile',
+  })
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiBearerAuth()
