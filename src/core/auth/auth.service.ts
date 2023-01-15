@@ -18,7 +18,7 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  createUser(createUserDto: CreateUserDto): Promise<string> {
+  createUser(createUserDto: CreateUserDto) {
     return new Promise(async (resolve, reject) => {
       try {
         const { password } = createUserDto;
@@ -26,7 +26,21 @@ export class AuthService {
         newUser.salt = await bcrypt.genSalt(14);
         newUser.password = await this.hashPassword(password, newUser.salt);
         await this.userRepository.save(newUser);
-        resolve('User created successfully');
+        const {
+          email,
+          fullName,
+          photoUrl,
+          phone,
+          address: userAddress,
+        } = newUser;
+        resolve({
+          email,
+          password,
+          fullName,
+          photoUrl,
+          phone,
+          userAddress,
+        });
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }

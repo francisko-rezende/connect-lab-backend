@@ -102,17 +102,15 @@ export class AppController {
   })
   @ApiConflictResponse({ type: ConflictErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
-  @Post('user')
+  @Post('auth/register')
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      const userCreatedMessage = await this.authService.createUser(
-        createUserDto,
-      );
-      const result: CreatedSuccessfulResponseDto = {
-        statusCode: HttpStatus.CREATED,
-        message: userCreatedMessage,
-      };
-      return result;
+      return await this.authService.createUser(createUserDto);
+      // const result: CreatedSuccessfulResponseDto = {
+      //   statusCode: HttpStatus.CREATED,
+      //   message: userCreatedMessage,
+      // };
+      // return userCreatedMessage;
     } catch (error) {
       if (error.code == 23505)
         throw new HttpException(
