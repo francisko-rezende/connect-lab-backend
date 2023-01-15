@@ -220,7 +220,7 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary:
-      'Allows the user to retrieve a specific device linked to his profile',
+      'Allows the user to retrieve a specific device linked to their profile',
   })
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
