@@ -11,8 +11,10 @@ These instructions will get you a copy of the project up and running on your loc
 - Node.js
 - NestJS
 - TypeScript
+- TypeORM
+- PostgreSQL
 
-### Installing
+### Setting up and running the app
 
 1. Clone the repository
 
@@ -20,13 +22,22 @@ These instructions will get you a copy of the project up and running on your loc
 git clone https://github.com/francisko-rezende/connect-lab-backend.git
 ```
 
-2. Install the dependencies
+2. Create a PostgreSQL database.
+3. Create a `.env` file in the root of the project. Use the `.env.example` file as a guide to setup the environment variables.
+
+4. Install the dependencies
 
 ```bash
 npm install
 ```
 
-3. Run the application
+5. Run the migrations
+
+```bash
+$ npm run migration:run
+```
+
+6. Run the application
 
 ```bash
 # development
@@ -64,6 +75,7 @@ You can download the OpenAPI JSON by visiting `http://localhost:3000/api-json` i
 - `/change-password`: Allows the user to change their password
 - `/user-device`: Allows the user to link a device to their profile
 - `/user-devices`: Allows the user to retrieve all the linked devices
+- `/user-devices/{userDeviceId}`: Allows the user to retrieve a specific device linked to his profile
 
 ### Built With
 

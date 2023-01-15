@@ -7,7 +7,7 @@ import { UserEntity } from 'src/entities/user.entity';
 import { UserDeviceEntity } from './entities/user-device.entity';
 import { devices } from './seeds/device-seeds';
 import { Inject, Injectable, HttpStatus } from '@nestjs/common';
-import { FindOperator, ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DeviceEntity } from './entities/device.entity';
 import { LocationEntity } from './entities/location.entity';
 import { locations } from './seeds/location-seeds';
@@ -110,36 +110,32 @@ export class AppService {
         const { userId } = userPayload;
         const { local } = locationQuery;
 
-        let where: {
-          userDevices?: { location: { description: FindOperator<string> } };
-          userId: number;
-        } = { userId: userId };
-
-        if (local) {
-          where = {
-            ...where,
-            userDevices: {
-              location: { description: ILike(`%${local}%`) },
-            },
-          };
-        }
-        const userDevices = await this.userRepository.findOne({
-          where,
+        const userDevicesResult = await this.userDeviceRepository.find({
+          where: {
+            user: { userId: userId },
+            location: { description: local },
+          },
           relations: {
-            userDevices: {
-              device: { deviceInfo: true },
-              location: true,
+            device: { deviceInfo: true },
+          },
+          select: {
+            userDeviceId: true,
+            isOn: true,
+            device: {
+              name: true,
+              type: true,
+              madeBy: true,
             },
           },
         });
 
-        if (!userDevices) {
+        if (!userDevicesResult) {
           resolve([]);
           return;
         }
 
         const linkedUserDevicesDto: FindUserDevicesResponseDto[] =
-          userDevices.userDevices.map(this.reshapeToFindUserDeviceDto);
+          userDevicesResult.map(this.reshapeToFindUserDeviceDto);
 
         resolve(linkedUserDevicesDto);
       } catch (error) {
@@ -166,7 +162,7 @@ export class AppService {
         });
 
         if (!userDevice) {
-          reject('Dispositivo não encontrado');
+          reject('Device not found');
         }
 
         resolve(this.reshapeToFindUserDeviceDto(userDevice));
