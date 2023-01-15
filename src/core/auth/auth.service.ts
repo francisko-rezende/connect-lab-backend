@@ -1,5 +1,5 @@
 import { ChangePasswordSuccessfulResponseDto } from './../../dto/change-password-successful-response.dto';
-import { SignInSuccessfulResponseDto } from './../../dto/sign-in-successful-response.dto';
+// import { SignInSuccessfulResponseDto } from './../../dto/sign-in-successful-response.dto';
 import { Inject, Injectable, HttpStatus } from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UserEntity } from 'src/entities/user.entity';
@@ -79,9 +79,7 @@ export class AuthService {
     });
   }
 
-  async signIn(
-    credentialsDto: CredentialsDto,
-  ): Promise<SignInSuccessfulResponseDto> {
+  async signIn(credentialsDto: CredentialsDto) {
     return new Promise(async (resolve, reject) => {
       try {
         const user = await this.checkCredentials(credentialsDto);
@@ -91,7 +89,15 @@ export class AuthService {
           return;
         }
 
-        const { userId, fullName, email, photoUrl } = user;
+        const {
+          userId,
+          email,
+          fullName,
+          photoUrl,
+          phone,
+          address: userAddress,
+        } = user;
+
         const firstName = this.getFirstName(fullName);
         const jwtPayload: JwtPayloadUser = {
           userId,
@@ -99,7 +105,17 @@ export class AuthService {
           email,
           photoUrl,
         };
-        resolve({ token: this.jwtService.sign(jwtPayload) });
+        resolve({
+          token: this.jwtService.sign(jwtPayload),
+          user: {
+            _id: userId,
+            email,
+            fullName,
+            photoUrl,
+            phone,
+            userAddress,
+          },
+        });
       } catch (error) {
         reject({ detail: error.detail, code: error.code });
       }
@@ -108,7 +124,10 @@ export class AuthService {
 
   async checkCredentials(credentialsDto: CredentialsDto) {
     const { email, password } = credentialsDto;
-    const user = await this.userRepository.findOne({ where: { email: email } });
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+      relations: { address: true },
+    });
 
     if (user && (await user.checkPassword(password))) {
       return user;

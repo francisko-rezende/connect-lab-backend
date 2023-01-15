@@ -83,7 +83,7 @@ export class AppController {
   })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
-  @Post('sign-in')
+  @Post('auth/login')
   async signIn(@Body() credentialsDto: CredentialsDto) {
     try {
       return await this.authService.signIn(credentialsDto);
