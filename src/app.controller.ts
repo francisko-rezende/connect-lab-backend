@@ -11,6 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpException,
@@ -262,6 +263,16 @@ export class AppController {
         body,
         +param.userDeviceId,
       );
+    } catch (error) {
+      throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('userDevices/:userDeviceId')
+  async deleteUserDevice(@Param() param) {
+    try {
+      return await this.appService.deleteUserDevice(+param.userDeviceId);
     } catch (error) {
       throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
     }

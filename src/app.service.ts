@@ -255,6 +255,20 @@ export class AppService {
     });
   }
 
+  deleteUserDevice(userDeviceId: number) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.userDeviceRepository.delete({ userDeviceId: userDeviceId });
+        resolve({
+          statusCode: HttpStatus.OK,
+          message: 'Device status updated',
+        });
+      } catch (error) {
+        reject({ detail: error.detail, code: error.code });
+      }
+    });
+  }
+
   async findAllLocals() {
     return await this.locationRepository.find();
   }
