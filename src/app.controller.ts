@@ -224,7 +224,7 @@ export class AppController {
   @ApiUnauthorizedResponse({ type: UnauthorizedErrorResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiBearerAuth()
-  @Get('user-devices/:userDeviceId')
+  @Get('userDevices/user/:userDeviceId')
   async findOneUserDevice(@Param() param: FindOneUserDeviceParamDto) {
     try {
       return await this.appService.findOneUserDevice(+param.userDeviceId);
@@ -233,14 +233,14 @@ export class AppController {
     }
   }
 
-  @Post('devices')
+  @Get('devices')
   async findAllDevices() {
     try {
       return await this.appService.findAllDevices();
     } catch (error) {}
   }
 
-  @Post('locals')
+  @Get('locals')
   async findAllLocals() {
     try {
       return await this.appService.findAllLocals();

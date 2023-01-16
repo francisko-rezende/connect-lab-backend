@@ -141,7 +141,6 @@ export class AppService {
           //   },
           // },
         });
-        console.log(userDevicesResult);
 
         if (!userDevicesResult) {
           resolve([]);
@@ -154,7 +153,6 @@ export class AppService {
 
         resolve(linkedUserDevicesDto);
       } catch (error) {
-        console.log(error);
         reject({ detail: error.detail, code: error.code });
       }
     });
@@ -165,16 +163,20 @@ export class AppService {
       try {
         const userDevice = await this.userDeviceRepository.findOne({
           where: { userDeviceId: userDeviceId },
-          relations: { device: { deviceInfo: true } },
-          select: {
-            userDeviceId: true,
-            isOn: true,
-            device: {
-              name: true,
-              type: true,
-              madeBy: true,
-            },
+          relations: {
+            device: { deviceInfo: true },
+            user: true,
+            location: true,
           },
+          // select: {
+          //   userDeviceId: true,
+          //   isOn: true,
+          //   device: {
+          //     name: true,
+          //     type: true,
+          //     madeBy: true,
+          //   },
+          // },
         });
 
         if (!userDevice) {
@@ -240,7 +242,7 @@ export class AppService {
 
   reshapeToFindUserDeviceDto(userDevice: UserDeviceEntity) {
     const {
-      user: { userId },
+      // user: { userId },
       userDeviceId,
       device: { name, type, madeBy, deviceInfo, deviceId, photoUrl },
       isOn,
@@ -250,7 +252,7 @@ export class AppService {
 
     return {
       _id: userDeviceId,
-      user: userId,
+      user: userDevice.user.userId,
       device: {
         info: deviceInfo,
         _id: deviceId,
