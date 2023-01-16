@@ -15,9 +15,6 @@ import { LinkDeviceDto } from './dto/link-device.dto';
 
 @Injectable()
 export class AppService {
-  async findAllLocals() {
-    return await this.locationRepository.find();
-  }
   constructor(
     @Inject('DEVICE_REPOSITORY')
     private readonly deviceRepository: Repository<DeviceEntity>,
@@ -238,6 +235,28 @@ export class AppService {
         reject({ detail: error.detail, code: error.code });
       }
     });
+  }
+
+  toggleDeviceStatus(body, userDeviceId: number) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userDevice = await this.userDeviceRepository.findOne({
+          where: { userDeviceId: userDeviceId },
+        });
+        userDevice.isOn = body.is_on;
+        await this.userDeviceRepository.save(userDevice);
+        resolve({
+          statusCode: HttpStatus.OK,
+          message: 'Device status updated',
+        });
+      } catch (error) {
+        reject({ detail: error.detail, code: error.code });
+      }
+    });
+  }
+
+  async findAllLocals() {
+    return await this.locationRepository.find();
   }
 
   reshapeToFindUserDeviceDto(userDevice: UserDeviceEntity) {

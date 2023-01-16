@@ -18,6 +18,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Request,
   UnauthorizedException,
@@ -233,17 +234,36 @@ export class AppController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('devices')
   async findAllDevices() {
     try {
       return await this.appService.findAllDevices();
-    } catch (error) {}
+    } catch (error) {
+      throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
+    }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('locals')
   async findAllLocals() {
     try {
       return await this.appService.findAllLocals();
-    } catch (error) {}
+    } catch (error) {
+      throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('userDevices/:userDeviceId')
+  async toggleDeviceStatus(@Body() body, @Param() param) {
+    try {
+      return await this.appService.toggleDeviceStatus(
+        body,
+        +param.userDeviceId,
+      );
+    } catch (error) {
+      throw new HttpException({ error }, HttpStatus.BAD_REQUEST);
+    }
   }
 }
